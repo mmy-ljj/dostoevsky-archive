@@ -1,0 +1,57 @@
+.book-rail{position:relative;display:flex;gap:28px;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x proximity;scroll-behavior:smooth;overscroll-behavior-x:contain;scrollbar-width:none;padding:22px var(--gutter) 25px;margin-inline:calc(var(--gutter) * -1);perspective:1400px;touch-action:pan-x pan-y;cursor:grab}
+.book-rail::-webkit-scrollbar{display:none}
+.book-rail.is-dragging{cursor:grabbing;scroll-snap-type:none;scroll-behavior:auto}
+.book-rail .book-card{flex:0 0 clamp(240px,25vw,330px);border:0;scroll-snap-align:center;position:relative;transform:translateY(var(--card-lift,0px)) rotateY(var(--card-rotate,0deg)) scale(var(--card-scale,1));transform-style:preserve-3d;transition:transform .25s ease-out}
+.book-rail .book-card:last-child{border:0}
+.book-rail .card-face{display:block;width:100%;padding:0;text-align:left;user-select:none;-webkit-user-select:none;border:0;color:var(--light);background:none}
+.cover-visual{display:block;aspect-ratio:3/4;position:relative;overflow:hidden;background:#18151b;border:1px solid #5b414c;transition:border-color .35s ease;isolation:isolate}
+.cover-image{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;transition:transform .7s var(--ease);z-index:-2;pointer-events:none}
+.has-cover:after{content:'';position:absolute;inset:0;z-index:-1;background:linear-gradient(0deg,rgba(7,4,10,.97),rgba(7,4,10,.6) 27%,transparent 65%,rgba(7,4,10,.4));pointer-events:none} /* taste-skill-ignore: neutral scrim over the commissioned cover illustration. */
+.type-cover{background:#211720}
+.type-cover:before{content:'Д';position:absolute;top:17%;left:0;right:0;text-align:center;font-family:var(--serif);font-size:150px;line-height:1.1;color:#503943;font-weight:400}
+.cover-year{position:absolute;left:24px;top:20px;font-family:var(--serif);font-size:13px;color:#e1c8c8;letter-spacing:.06em}
+.cover-title{position:absolute;left:24px;right:24px;bottom:26px}
+.cover-title strong{display:block;font-family:var(--serif);font-size:clamp(26px,2.4vw,35px);font-weight:400;line-height:1.5;text-wrap:balance}
+.cover-title>span{display:block;color:#d6bdc6;font-size:12px;line-height:1.8;margin-top:10px}
+.card-caption{display:flex;justify-content:space-between;gap:18px;padding:17px 1px 3px;align-items:flex-start;min-height:64px}
+.card-caption .book-en{font-size:12px;line-height:1.6;max-width:65%;color:var(--dim)}
+.card-invitation{display:flex;align-items:center;gap:8px;font-size:11px;white-space:nowrap;color:var(--accent)}
+.card-invitation svg{width:16px;height:16px;transition:transform .3s var(--ease)}
+.card-face:hover .cover-image{transform:scale(1.035)}
+.card-face:hover .card-invitation svg{transform:translateX(4px)}
+.book-card.deck-current .cover-visual,.book-card.is-open .cover-visual,.card-face:focus-visible .cover-visual{border-color:#c38e9b}
+.book-card.is-open .card-invitation{color:var(--light)}
+.rail-toolbar{display:flex;justify-content:space-between;gap:24px;align-items:center;margin-top:10px;padding:0 0 18px}
+.rail-toolbar>p{font-size:13px;color:var(--dim)}
+.rail-controls{display:flex;align-items:center;gap:12px}
+#cardPosition{font-size:12px;color:var(--dim);font-variant-numeric:tabular-nums;min-width:44px;margin-right:10px}
+.rail-controls button{display:grid;place-items:center;width:44px;height:44px;border:1px solid #6e525f;color:var(--light);padding:0}
+.rail-controls button:hover:not(:disabled){background:#3a2534;color:#f1d8e5}
+.rail-controls button:disabled{cursor:default;opacity:.3}
+.rail-controls svg{width:21px;height:21px}
+.book-details .book-panel{border:0;background:rgba(22,13,25,.9)}
+.book-details .book-detail{padding:34px;gap:7%}
+.book-details .book-panel:not(.is-open){background:transparent}
+.catalogue-note{margin-top:16px}
+@media(max-width:760px){
+ .book-rail{gap:18px;padding-top:15px;padding-bottom:20px}
+ .book-rail .book-card{flex-basis:calc(100vw - 100px);max-width:330px;min-width:235px}
+ .cover-title{left:21px;right:21px;bottom:23px}
+ .cover-title strong{font-size:29px}
+ .cover-year{left:21px;top:18px;font-size:12px}
+ .cover-title>span{font-size:11px}
+ .card-caption{gap:10px;padding-top:14px;min-height:60px}
+ .card-caption .book-en{font-size:11px}
+ .card-invitation{font-size:11px;gap:6px}
+ .rail-toolbar{gap:16px;margin-top:5px}
+ .rail-toolbar>p{font-size:11px}
+ .rail-controls{gap:8px}
+ #cardPosition{font-size:11px;margin-right:3px;min-width:34px}
+ .rail-controls button{width:38px;height:38px}
+ .book-details .book-detail{padding:25px 20px;gap:23px}
+}
+@media(prefers-reduced-motion:reduce){
+ .book-rail{scroll-behavior:auto}
+ .book-rail .book-card{transform:none;transition:none}
+ .card-face:hover .cover-image{transform:none}
+}

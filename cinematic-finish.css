@@ -1,0 +1,35 @@
+/* A quiet editorial frame around the existing scroll film. */
+:root{--ease-out:cubic-bezier(.16,1,.3,1)}
+html{scrollbar-color:#64716e #0b1115;scroll-padding-top:110px}
+button,a,input,textarea{-webkit-tap-highlight-color:transparent}
+button,a{touch-action:manipulation}
+:focus-visible{outline:2px solid #d1bc99;outline-offset:6px}
+.site-header{transition:background .4s,backdrop-filter .4s;min-height:80px;padding-block:17px}
+.site-header.header-scrolled{background:rgba(10,14,17,.92)}
+.film-copy{will-change:transform,opacity}
+.introduction{position:relative;min-height:70svh;align-items:center}
+.intro-body{align-self:center}
+.featured-image{aspect-ratio:1.1;overflow:hidden}
+.featured-image img{transition:transform 1.2s var(--ease-out)}
+.featured-copy .book-english{font-size:16px;line-height:1.7}
+.catalogue .section-heading{margin-bottom:52px}
+.book-rail{scroll-padding-inline:2px;overscroll-behavior-x:contain;scroll-snap-type:x proximity}
+.book-rail .book-card{scroll-snap-align:start;transition:transform .7s var(--ease-out)}
+.cover-image{transition:transform .9s var(--ease-out),filter .9s var(--ease-out)}
+.book-panel{transition:grid-template-rows .65s var(--ease-out),opacity .4s!important}
+.book-detail{column-gap:clamp(32px,7vw,110px)}
+.book-detail h3{font-size:clamp(24px,2.5vw,36px);font-weight:400;margin-bottom:24px}
+.book-detail .people{margin-top:28px;color:#b9beb7}
+.book-details .book-panel{background:#10191e}
+.reading-image{overflow:hidden}.reading-image img{aspect-ratio:4/5;object-fit:cover;max-height:640px}
+.reading-paths button{transition:color .25s,padding-left .5s var(--ease-out)}
+.text-link svg{transition:transform .4s var(--ease-out)}
+.text-link:hover svg{transform:translateX(5px)}
+.journey-indicator{transition:opacity .3s;max-width:calc(100vw - 32px)}
+body.reading-focus .journey-indicator{opacity:0;pointer-events:none}
+body.reading-focus .journey-indicator:focus-within{opacity:1;pointer-events:auto}
+#encounterChat{transition:background .4s;scrollbar-gutter:stable}
+@media(hover:hover){.card-face:hover .cover-image{transform:scale(1.035);filter:brightness(1.08)}.featured-image:hover img{transform:scale(1.025)}.reading-paths button:hover{padding-left:10px;color:#e6d5b9}}
+@media(min-width:1000px){.page-section{padding-inline:max(var(--gutter),calc((100vw - 1280px)/2))}.catalogue{padding-right:var(--gutter)}.reading{padding-block:160px}.featured{padding-block:130px}}
+@media(max-width:760px){html{scroll-padding-top:90px}.site-header{min-height:72px;padding:12px 20px}.featured-image{aspect-ratio:5/4}.catalogue .section-heading{margin-bottom:28px}.reading-image img{aspect-ratio:4/3;max-height:360px}.book-detail h3{font-size:25px}.film-copy{will-change:auto}.film-tools button,.filters button,.text-link{min-height:44px}.text-link{display:inline-flex;align-items:center}.journey-indicator{bottom:max(12px,env(safe-area-inset-bottom))}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.film-copy{transform:none!important;opacity:1!important}.cover-image,.book-panel,.reading-paths button,.featured-image img{transition:none!important}}

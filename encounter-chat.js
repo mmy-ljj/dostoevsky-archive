@@ -1,0 +1,7 @@
+(() => {
+ const dialog=document.querySelector('#chatDialog'),section=document.querySelector('#encounter');const panel=document.createElement('div');panel.id='encounterChat';panel.setAttribute('role','region');panel.setAttribute('aria-label','书房对话');section.append(panel);let docked=false;
+ function restore(){if(!docked)return;while(panel.firstChild)dialog.append(panel.firstChild);docked=false;document.body.classList.remove('chat-in-room');}
+ function update(){const active=(document.body.classList.contains('author-idle')||(document.body.classList.contains('static-motion')&&section.getBoundingClientRect().top<innerHeight*.3&&section.getBoundingClientRect().bottom>innerHeight*.3))&&!dialog.open&&scrollY<section.offsetTop+section.offsetHeight-180;if(active&&!docked){while(dialog.firstChild)panel.append(dialog.firstChild);docked=true;document.body.classList.add('chat-in-room');panel.querySelector('[data-character="dostoevsky"]').click();}else if(!active&&docked)restore();}
+ document.addEventListener('click',event=>{if(event.target.closest('[data-open-chat]'))restore();},true);
+ new MutationObserver(update).observe(document.body,{attributes:true,attributeFilter:['class']});addEventListener('scroll',update,{passive:true});dialog.addEventListener('close',update);update();
+})();

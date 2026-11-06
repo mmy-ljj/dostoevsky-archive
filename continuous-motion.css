@@ -1,0 +1,47 @@
+/* One real film runs beneath the entire reading journey. */
+.world-backdrop{position:fixed;inset:0;z-index:0;isolation:isolate;pointer-events:none;overflow:hidden;background:#09090c}
+main,.site-footer{position:relative;z-index:1}
+.film-scroll{height:155svh;background:transparent}
+.film-stage{background:transparent}
+.introduction,.featured,.reading,.author,.catalogue,.site-footer{background:transparent}
+.introduction{background:rgba(12,9,14,.72)}
+.featured{background:rgba(12,9,14,.78)}
+.catalogue{background:rgba(8,6,11,.84)}
+.reading{background:rgba(14,9,17,.69)}
+.author{background:rgba(17,10,19,.8)}
+.site-footer{background:rgba(7,5,10,.72);padding-bottom:100px}
+.world-backdrop .film-shade{transition:opacity .8s ease;opacity:1}
+.past-opening .world-backdrop .film-shade{opacity:.8}
+.featured-image,.reading-image,.author-portrait{overflow:hidden}
+.featured-image>img,.reading-image>img,.author-portrait>img{transform:scale(1.1) translateY(var(--photo-drift,0px));transition:transform .25s ease-out;will-change:transform}
+.author-portrait{padding-bottom:18px}
+.author-portrait figcaption{position:relative;padding-top:10px;background:rgba(17,10,19,.8)}
+.timeline>div{transition:opacity .6s ease,color .6s ease;opacity:.9}
+.timeline>div.timeline-passed{opacity:1}
+.timeline-passed dt{color:var(--accent)}
+.footer-word{transform:translateY(var(--footer-drift,0px));transition:transform .4s ease-out}
+.journey-indicator{position:fixed;right:var(--gutter);bottom:18px;z-index:25;display:flex;align-items:center;gap:20px;padding:10px 16px 13px;background:rgba(10,7,13,.93);color:var(--dim);font-size:12px;opacity:0;visibility:hidden;transform:translateY(10px);transition:opacity .5s ease,transform .5s var(--ease),visibility .5s}
+.past-opening .journey-indicator{opacity:1;visibility:visible;transform:none}
+.journey-indicator button{font-size:12px;color:var(--light);padding:4px 0;min-height:32px;white-space:nowrap}
+.journey-indicator button:hover{color:var(--accent)}
+.journey-progress{position:absolute;bottom:0;left:0;right:0;height:2px;background:#48333e}
+.journey-progress>span{display:block;height:100%;background:#cf9a91;transform:scaleX(0);transform-origin:left}
+.book-panel{background:rgba(22,13,25,.79)}
+.static-motion .world-backdrop{position:fixed}
+.static-motion .featured-image>img,.static-motion .reading-image>img,.static-motion .author-portrait>img{transform:none;will-change:auto}
+.static-motion .footer-word{transform:none}
+.static-motion .timeline>div{opacity:1}
+@media(max-width:760px){
+ .film-scroll{height:135svh}
+ .journey-indicator{bottom:12px;right:16px;left:16px;gap:12px;justify-content:space-between;padding:9px 12px 11px;font-size:11px}
+ .journey-indicator button{font-size:11px}
+ .journey-indicator #journeySkip{font-size:10px}
+ .site-footer{padding-bottom:100px}
+}
+@media(prefers-reduced-motion:reduce){
+ .film-scroll{height:100svh}
+ .featured-image>img,.reading-image>img,.author-portrait>img,.footer-word{transform:none;will-change:auto}
+ .timeline>div{opacity:1}
+}
+
+@media(max-width:760px){.world-backdrop .film-picture video{object-position:88% 50%}}

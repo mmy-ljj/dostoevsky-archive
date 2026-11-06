@@ -1,0 +1,17 @@
+.env
+.env.*
+!.env.example
+node_modules/
+.DS_Store
+.taste-skill/
+.impeccable/
+playwright-report/
+test-results/
+*.log
+
+# Local production receipts, references and review artifacts
+production/
+*-verification.json
+preview*.png
+assets/**/review.html
+assets/**/manifest.json

@@ -1,0 +1,9 @@
+@font-face{font-family:ArchiveBrush;src:url('assets/fonts/ma-shan-zheng.woff2');font-style:normal;font-weight:400;font-display:swap}
+:root{--blood:#d52b39;--brush:ArchiveBrush,'STKaiti','KaiTi',cursive}
+.identity>span:last-child{font-family:var(--brush);color:var(--blood)}
+.identity .identity-sub{font-family:var(--sans);color:var(--dim)}
+.film-copy h1,.film-copy h1 span,.film-copy h2,.page-section h2,.encounter h2,.cover-title strong,.footer-word{font-family:var(--brush);font-weight:400;color:var(--blood);letter-spacing:.035em}
+.film-copy h1 span{font-size:clamp(76px,8.4vw,124px)}
+.cover-title strong{font-size:clamp(30px,2.7vw,40px);line-height:1.35}
+.encounter h2{font-size:clamp(42px,5.4vw,78px)}
+@media(max-width:760px){.film-copy h1 span{font-size:clamp(56px,14vw,78px)}.cover-title strong{font-size:32px}.encounter h2{font-size:42px}}
