@@ -1,0 +1,33 @@
+# Render 蓝图：把「文学会客厅」的对话后端部署成一键可用的免费 Web 服务
+# 用法：Render 控制台 → New → Blueprint → 选择本仓库，会自动读取本文件
+services:
+  - type: web
+    name: dostoevsky-persona
+    runtime: node
+    plan: free
+    region: singapore
+    branch: main
+    buildCommand: npm install --omit=dev
+    startCommand: node persona-server.mjs
+    healthCheckPath: /health
+    envVars:
+      # 与你网页「API 配置」里的“后端管理口令”必须完全一致
+      - key: CONFIG_ADMIN_TOKEN
+        sync: false
+      # 也可以直接在这里写死 DeepSeek Key；留空则改由网页「API 配置」运行时填入
+      - key: AI_API_KEY
+        sync: false
+      - key: AI_BASE_URL
+        value: https://api.deepseek.com
+      - key: AI_MODEL
+        value: deepseek-flash
+      # 允许调用这个后端的网页来源（GitHub Pages 站点 + 本地预览）
+      - key: ALLOWED_ORIGINS
+        value: https://mmy-ljj.github.io,http://localhost:8089,http://127.0.0.1:8089
+      # 可选：Azure 语音（不填则网页只能文字回答）
+      - key: AZURE_SPEECH_KEY
+        sync: false
+      - key: AZURE_SPEECH_REGION
+        sync: false
+      - key: NODE_VERSION
+        value: 22.11.0

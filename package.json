@@ -1,0 +1,14 @@
+{
+  "name": "dostoevsky-archive-server",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "文学会客厅后端：人物对话（DeepSeek）+ 可选 Azure 语音合成",
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "scripts": {
+    "start": "node persona-server.mjs",
+    "dev": "node persona-server.mjs"
+  }
+}
