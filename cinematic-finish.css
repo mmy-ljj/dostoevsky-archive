@@ -33,3 +33,11 @@ body.reading-focus .journey-indicator:focus-within{opacity:1;pointer-events:auto
 @media(min-width:1000px){.page-section{padding-inline:max(var(--gutter),calc((100vw - 1280px)/2))}.catalogue{padding-right:var(--gutter)}.reading{padding-block:160px}.featured{padding-block:130px}}
 @media(max-width:760px){html{scroll-padding-top:90px}.site-header{min-height:72px;padding:12px 20px}.featured-image{aspect-ratio:5/4}.catalogue .section-heading{margin-bottom:28px}.reading-image img{aspect-ratio:4/3;max-height:360px}.book-detail h3{font-size:25px}.film-copy{will-change:auto}.film-tools button,.filters button,.text-link{min-height:44px}.text-link{display:inline-flex;align-items:center}.journey-indicator{bottom:max(12px,env(safe-area-inset-bottom))}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.film-copy{transform:none!important;opacity:1!important}.cover-image,.book-panel,.reading-paths button,.featured-image img{transition:none!important}}
+/* The film remains visible through every narrative section. */
+.introduction,.featured,.catalogue,.reading,.author,.site-footer,
+.author-portrait figcaption{background:transparent!important}
+.page-section h2,.page-section p,.page-section dt,.page-section dd,
+.page-section .text-link,.section-heading,.catalogue-tools,.rail-toolbar,
+.author-portrait figcaption,.footer-main{text-shadow:0 2px 12px rgba(0,0,0,.9)}
+.world-backdrop .film-shade{opacity:.48}
+.past-opening .world-backdrop .film-shade{opacity:.48}
