@@ -44,3 +44,7 @@ body.reading-focus .journey-indicator:focus-within{opacity:1;pointer-events:auto
 .hold-to-talk{display:block;width:100%;min-height:48px;margin:0 0 12px;padding:12px 18px;border:1px solid #647772;border-radius:8px;color:#e6e3db;background:rgba(17,28,31,.86);touch-action:none;user-select:none;-webkit-user-select:none}
 .hold-to-talk[aria-pressed="true"]{background:#364c46;border-color:#cfb98f;color:#fff6e7}
 .hold-to-talk:focus-visible{outline:2px solid #cfb98f;outline-offset:3px}
+.chat-actions{flex-wrap:wrap;row-gap:8px}
+.chat-actions button{white-space:nowrap;flex-shrink:0}
+#encounterChat .chat-actions{column-gap:12px}
+@media(max-width:760px){.chat-actions{column-gap:16px!important}.chat-actions button{min-height:40px}.chat-actions #chatSend{margin-left:auto}}
