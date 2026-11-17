@@ -355,6 +355,13 @@
     utterance.lang='zh-CN';utterance.rate=.93;
     const voice=window.speechSynthesis.getVoices().find(v=>/^zh/i.test(v.lang));
     if(voice)utterance.voice=voice;
+    utterance.volume = 1;
+    utterance.onerror = event => {
+      if (!['canceled','interrupted'].includes(event.error)) {
+        $('#chatStatus').textContent = '语音未能播放（' + event.error + '）。请在 Edge 或 Chrome 中打开，确认标签页未静音，并安装中文语音。';
+      }
+    };
+    window.speechSynthesis.resume();
     window.speechSynthesis.speak(utterance);
   }
   const stopVoice=document.createElement('button');stopVoice.type='button';stopVoice.textContent='停止回应';
@@ -462,7 +469,7 @@
   $('#chatForm').addEventListener('submit', async event => {
     event.preventDefault(); if (chatBusy || recognition) return;
     const input = $('#chatInput'), content = input.value.trim(); if (!content) return;
-    window.speechSynthesis?.cancel();
+    if (event.submitter) window.speechSynthesis?.cancel();
     const id = character, history = histories[id];const historyStart=history.length; history.push({role:'user',content}); input.value = ''; chatBusy = true; drawChat();
     if (!endpoint()) {
       const controller = new AbortController();
@@ -547,6 +554,8 @@
   sampleButton.addEventListener('click', () => {
     if (chatBusy) return;
     if (!voiceEnabled) $('#voiceToggle').click();
+    window.speechSynthesis?.cancel();
+    speak('请坐。');
     $('#chatInput').value = '我有些孤独，也害怕被人理解。';
     $('#chatForm').requestSubmit();
   });
