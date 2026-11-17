@@ -364,8 +364,103 @@
     if (!window.speechSynthesis) { $('#chatStatus').textContent = '此浏览器不支持朗读，可继续文字对话。'; return; }
     voiceEnabled = !voiceEnabled; event.currentTarget.setAttribute('aria-pressed', String(voiceEnabled)); event.currentTarget.textContent = voiceEnabled ? '边生成边朗读' : '朗读关闭'; if (!voiceEnabled) window.speechSynthesis.cancel();
   });
+  const recognitionClass = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const microphone = document.createElement('button');
+  microphone.type = 'button';
+  microphone.className = 'hold-to-talk';
+  microphone.textContent = '按住说话';
+  microphone.setAttribute('aria-label', '按住说话，松开发送。键盘按住空格也可使用');
+  microphone.setAttribute('aria-pressed', 'false');
+  $('#chatInput').before(microphone);
+  let recognition = null;
+  let holdingMicrophone = false;
+  let sendRecording = false;
+  let transcript = '';
+  let originalInput = '';
+  let pendingVoiceSend = false;
+  let recognitionFailed = false;
+  function finishRecording(send) {
+    holdingMicrophone = false;
+    sendRecording = send && !recognitionFailed;
+    microphone.setAttribute('aria-pressed', 'false');
+    microphone.textContent = '按住说话';
+    recognition?.stop();
+  }
+  function startRecording() {
+    if (recognition) return;
+    if (!recognitionClass) {
+      $('#chatStatus').textContent = '此浏览器未提供语音识别，请先使用文字输入。';
+      return;
+    }
+    chatAbort?.abort();
+    window.speechSynthesis?.cancel();
+    originalInput = $('#chatInput').value;
+    transcript = '';
+    sendRecording = false;
+    recognitionFailed = false;
+    pendingVoiceSend = false;
+    holdingMicrophone = true;
+    const session = new recognitionClass();
+    recognition = session;
+    session.lang = 'zh-CN';
+    session.continuous = true;
+    session.interimResults = true;
+    session.onresult = event => {
+      transcript = Array.from(event.results, result => result[0].transcript).join('');
+      $('#chatInput').value = originalInput + transcript;
+    };
+    session.onerror = event => {
+      recognitionFailed = true;
+      sendRecording = false;
+      $('#chatStatus').textContent = event.error === 'not-allowed'
+        ? '请允许麦克风权限，然后再次按住说话。'
+        : '语音识别未完成，可检查麦克风或直接输入文字。';
+    };
+    session.onend = () => {
+      recognition = null;
+      holdingMicrophone = false;
+      microphone.setAttribute('aria-pressed', 'false');
+      microphone.textContent = '按住说话';
+      if (sendRecording && transcript.trim()) {
+        if (!voiceEnabled) $('#voiceToggle').click();
+        if (!chatBusy) $('#chatForm').requestSubmit();
+        else pendingVoiceSend = true;
+      } else if (!recognitionFailed) {
+        $('#chatInput').value = originalInput;
+        $('#chatStatus').textContent = sendRecording ? '没有听清，请再试一次。' : '录音已取消。';
+      }
+    };
+    try {
+      session.start();
+      microphone.setAttribute('aria-pressed', 'true');
+      microphone.textContent = '松开发送';
+      $('#chatStatus').textContent = '正在听，请说话…';
+    } catch {
+      recognition = null;
+      holdingMicrophone = false;
+      $('#chatStatus').textContent = '无法启动语音识别，请重试。';
+    }
+  }
+  microphone.addEventListener('pointerdown', event => {
+    if (event.button !== 0) return;
+    event.preventDefault();
+    microphone.setPointerCapture(event.pointerId);
+    startRecording();
+  });
+  microphone.addEventListener('pointerup', () => { if (holdingMicrophone) finishRecording(true); });
+  microphone.addEventListener('contextmenu', event => event.preventDefault());
+  microphone.addEventListener('lostpointercapture', () => { if (holdingMicrophone) finishRecording(false); });
+  microphone.addEventListener('pointercancel', () => finishRecording(false));
+  microphone.addEventListener('keydown', event => {
+    if (event.code === 'Space' && !event.repeat) { event.preventDefault(); startRecording(); }
+    if (event.key === 'Escape') finishRecording(false);
+  });
+  microphone.addEventListener('keyup', event => {
+    if (event.code === 'Space') { event.preventDefault(); if (holdingMicrophone) finishRecording(true); }
+  });
+  addEventListener('blur', () => { if (holdingMicrophone) finishRecording(false); });
   $('#chatForm').addEventListener('submit', async event => {
-    event.preventDefault(); if (chatBusy) return;
+    event.preventDefault(); if (chatBusy || recognition) return;
     const input = $('#chatInput'), content = input.value.trim(); if (!content) return;
     window.speechSynthesis?.cancel();
     const id = character, history = histories[id];const historyStart=history.length; history.push({role:'user',content}); input.value = ''; chatBusy = true; drawChat();
@@ -394,8 +489,17 @@
         history.push({role:'assistant',content:data.reply});speak(data.reply);
       }
       $('#chatStatus').textContent='';
-    } catch (error) { window.speechSynthesis?.cancel();history.splice(historyStart); input.value = content; $('#chatStatus').textContent = error.name === 'AbortError' ? '已停止回应，可修改问题后重新发送。' : `${error.message} 请检查连接设置。`; }
-    finally { clearTimeout(timeout); chatBusy = false; chatAbort = null; drawChat(); }
+    } catch (error) { window.speechSynthesis?.cancel();if(error.name !== 'AbortError'){history.splice(historyStart);input.value=content;}else{const partial=history.at(-1);if(partial?.role==='assistant'&&!partial.content.trim())history.pop();} $('#chatStatus').textContent = error.name === 'AbortError' ? '已停止回应，可修改问题后重新发送。' : `${error.message} 请检查连接设置。`; }
+    finally {
+      clearTimeout(timeout);
+      chatBusy = false;
+      chatAbort = null;
+      drawChat();
+      if (pendingVoiceSend) {
+        pendingVoiceSend = false;
+        $('#chatForm').requestSubmit();
+      }
+    }
   });
 
   renderBooks(); selectScene(0); applyMotionMode();
