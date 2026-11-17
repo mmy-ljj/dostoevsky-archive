@@ -464,7 +464,39 @@
     const input = $('#chatInput'), content = input.value.trim(); if (!content) return;
     window.speechSynthesis?.cancel();
     const id = character, history = histories[id];const historyStart=history.length; history.push({role:'user',content}); input.value = ''; chatBusy = true; drawChat();
-    if (!endpoint()) { history.push({role:'assistant',content:people[id].demo,demo:true}); chatBusy = false; drawChat(); $('#chatStatus').textContent = '这是固定示例。接入后端后可进行真实 AI 对话。'; speak(people[id].demo); return; }
+    if (!endpoint()) {
+      const controller = new AbortController();
+      chatAbort = controller;
+      const sample = id === 'dostoevsky' && /孤独|理解|心事/.test(content)
+        ? '你希望被理解，却又害怕别人真的看见你。先别急着责备自己的孤独。想一想，当有人走近时，你是向他开了门，还是先替自己准备好了拒绝的理由？'
+        : people[id].demo;
+      const message = {role:'assistant', content:'', demo:true};
+      history.push(message);
+      try {
+        for (const sentence of sample.match(/[^。！？]+[。！？]?/g) || [sample]) {
+          await new Promise((resolve, reject) => {
+            const cancel = () => { clearTimeout(timer); reject(new DOMException('Stopped', 'AbortError')); };
+            const timer = setTimeout(() => { controller.signal.removeEventListener('abort', cancel); resolve(); }, 650);
+            controller.signal.addEventListener('abort', cancel, {once:true});
+            if (controller.signal.aborted) cancel();
+          });
+          message.content += sentence;
+          drawChat();
+          $('#chatStatus').textContent = '预设内容演示 · 正在逐句呈现';
+          speak(sentence);
+        }
+        $('#chatStatus').textContent = '预设内容演示完成 · 声音来自浏览器系统朗读';
+      } catch {
+        if (!message.content) history.pop();
+        $('#chatStatus').textContent = '已打断，可以继续说话。';
+      } finally {
+        chatBusy = false;
+        chatAbort = null;
+        drawChat();
+        if (pendingVoiceSend) { pendingVoiceSend = false; $('#chatForm').requestSubmit(); }
+      }
+      return;
+    }
     const controller = new AbortController(); chatAbort = controller;
     const timeout = setTimeout(() => controller.abort(), 90000);
     $('#chatStatus').textContent = '正在等待回应…';
@@ -503,6 +535,22 @@
   });
 
   renderBooks(); selectScene(0); applyMotionMode();
+  if (new URLSearchParams(location.search).get('room') === '1') {
+    requestAnimationFrame(() => {
+      const room = $('#encounter');
+      scrollTo({top:room.offsetTop + innerHeight * 1.1, behavior:'instant'});
+    });
+  }
+  const sampleButton = document.createElement('button');
+  sampleButton.type = 'button';
+  sampleButton.textContent = '试听对话样例';
+  sampleButton.addEventListener('click', () => {
+    if (chatBusy) return;
+    if (!voiceEnabled) $('#voiceToggle').click();
+    $('#chatInput').value = '我有些孤独，也害怕被人理解。';
+    $('#chatForm').requestSubmit();
+  });
+  $('#voiceToggle').before(sampleButton);
   if ('IntersectionObserver' in window) {
     const reveal = new IntersectionObserver(entries => entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.remove('will-reveal'); reveal.unobserve(entry.target); } }), {threshold:.08});
     $$('.intro-heading,.intro-body,.featured-image,.featured-copy,.section-heading,.reading-copy,.reading-image,.author-portrait,.author-copy').forEach(element => { element.classList.add('reveal-ready'); if (!reduced.matches && element.getBoundingClientRect().top > innerHeight) element.classList.add('will-reveal'); reveal.observe(element); });
